@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>احصاءات خاصة بنقط المراقبة المستمرة</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #2980b9;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #c0392b;
+            --light-bg: #f8f9fa;
+            --border-color: #bdc3c7;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef2f5;
+            margin: 0; padding: 10px; color: var(--primary);
+        }
+        .container {
+            max-width: 1150px;
+            margin: 0 auto;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .setup-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+            background: #fff;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .setup-section label {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .setup-section select {
+            padding: 10px;
+            font-size: 13px;
+            font-family: inherit;
+            border: 2px solid var(--accent);
+            border-radius: 6px;
+            outline: none;
+            background-color: #fcfcfc;
+            cursor: pointer;
+        }
+
+        .upload-section {
+            border: 2px dashed var(--accent);
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            background: var(--light-bg);
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 20px;
+        }
+        .upload-section p { font-size: 14px; font-weight: bold; color: var(--accent); margin: 0; }
+        .upload-section input { display: none; }
+        
+        .meta-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            background: #ecf0f1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-right: 5px solid var(--accent);
+            display: none;
+        }
+        .meta-item { font-size: 12px; }
+        .meta-item span { font-weight: bold; color: var(--accent); }
+
+        .print-meta-header { display: none; }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            display: none;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        .tab-btn {
+            padding: 8px 12px;
+            border: none;
+            background: #dcdde1;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 5px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .tab-btn.active { background: var(--accent); color: white; }
+        .tab-btn.btn-evolution-tab { background: #8e44ad; color: white; }
+        .tab-btn.btn-evolution-tab.active { background: #5b2c6f; }
+        
+        .report-content { display: none; }
+        .report-content.active { display: block; }
+
+        .grid-layout { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            margin-bottom: 15px; 
+        }
+
+        .card { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; }
+        .card h3 { margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; color: var(--primary); font-size: 13px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        table th, table td { border: 1px solid var(--border-color); padding: 6px; text-align: center; font-size: 12px; }
+        table th { background: #f8f9fa; font-weight: bold; }
+
+        .chart-box { text-align: center; display: flex; justify-content: center; align-items: center; padding: 10px 0; }
+
+        .rosters { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            margin-top: 10px; 
+        }
+        .roster-col { width: 100%; padding: 10px; border-radius: 6px; }
+        .col-mutahakim { background-color: #ebf7ee; border: 1px solid var(--success); }
+        .col-fitawr { background-color: #fefeed; border: 1px solid var(--warning); }
+        .col-support { background-color: #fdf3f3; border: 1px solid var(--danger); }
+        .col-evolution { background-color: #f4ecf7; border: 1px solid #8e44ad; }
+        
+        .roster-col h4 { margin-top: 0; margin-bottom: 8px; text-align: center; font-size: 12px; padding-bottom: 6px; border-bottom: 1px solid #ddd; }
+        
+        .students-list-container { max-height: 250px; overflow-y: auto; }
+        
+        .student-item {
+            background: white; padding: 6px 8px; margin: 4px 0; border-radius: 4px;
+            font-size: 12px; border-right: 3px solid #ccc;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .col-mutahakim .student-item { border-right-color: var(--success); }
+        .col-fitawr .student-item { border-right-color: var(--warning); }
+        .col-support .student-item { border-right-color: var(--danger); }
+        .col-evolution .student-item { border-right-color: #8e44ad; }
+        .st-name { text-align: right; word-break: break-word; font-weight: 500; }
+        .st-grade { font-weight: bold; color: #333; margin-right: 10px; font-size: 11px; direction: ltr; }
+
+        .btn-pdf {
+            display: none; width: 100%; padding: 12px; background: #e74c3c; color: white;
+            border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; text-align: center;
+        }
+
+        .developer-credits {
+            text-align: center; margin-top: 25px; padding-top: 15px;
+            border-top: 1px dashed #e2e8f0; font-size: 11px; color: #7f8c8d;
+        }
+        .developer-credits span { color: var(--accent); font-weight: bold; }
+
+        h2 { font-size: 14px; text-align: center; margin-top: 5px; }
+
+        @media (min-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 30px; }
+            h1 { font-size: 22px; }
+            .setup-section { flex-direction: row; align-items: center; gap: 15px; }
+            .meta-info { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); padding: 15px; }
+            .tab-btn { font-size: 13px; padding: 8px 16px; }
+            .grid-layout { flex-direction: row; }
+            .grid-layout > div { flex: 1; }
+            .rosters { flex-direction: row; }
+            .roster-col { flex: 1; }
+            h2 { font-size: 16px; }
+        }
+
+        @media print {
+            @page { size: A4 portrait; margin: 7mm 6mm; }
+            body { background: white; padding: 0; margin: 0; color: #000; font-size: 10px; }
+            .container { box-shadow: none; padding: 0; width: 100%; max-width: 100%; }
+            .upload-section, .setup-section, .tabs, .btn-pdf, #metaInfo, .developer-credits { display: none !important; }
+            body.is-svt #report_2 { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            .print-meta-header {
+                display: flex !important; flex-wrap: wrap; background: #f5f6fa !important; 
+                border: 1px solid #bdc3c7 !important; border-right: 5px solid #2980b9 !important;
+                margin-bottom: 8px; padding: 6px; border-radius: 4px; gap: 10px;
+            }
+            .print-meta-cell { flex: 1; min-width: 23%; font-size: 11px; }
+            .print-meta-cell span { font-weight: bold; color: #2980b9 !important; }
+            
+            .report-content { 
+                display: block !important; page-break-after: always !important; break-after: page !important;
+                page-break-inside: avoid !important; margin-bottom: 0px; padding-top: 2px;
+            }
+            .report-content:last-child { page-break-after: avoid !important; break-after: avoid !important; }
+            
+            .grid-layout { flex-direction: row !important; }
+            .grid-layout > div { flex: 1 !important; }
+            .rosters { flex-direction: row !important; }
+            .roster-col { flex: 1 !important; padding: 5px; }
+            .card { padding: 8px; margin-bottom: 6px; }
+            .card h3 { font-size: 11px; padding-bottom: 2px; margin-bottom: 4px; }
+            .chart-box { padding: 0; }
+            table th, table td { padding: 4px; font-size: 10px; }
+            .students-list-container { max-height: none !important; overflow: visible !important; }
+            .student-item { padding: 2px 4px; margin: 2px 0; font-size: 9px; }
+            h2 { font-size: 13px !important; margin-bottom: 6px !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>احصاءات خاصة بنقط المراقبة المستمرة</h1>
+    
+    <div class="setup-section">
+        <label for="semesterSelect">🔄 اختر الدورة الدراسية الحالية للتقرير:</label>
+        <select id="semesterSelect" onchange="updateSemesterText()">
+            <option value="الأولى">الدورة الأولى</option>
+            <option value="الثانية">الدورة الثانية</option>
+        </select>
+    </div>
+
+    <div class="upload-section" onclick="document.getElementById('fileInput').click()">
+        <p>📥 اضغط هنا واختـر ملف نقط مسار الإكسيل (xlsx.)</p>
+        <input type="file" id="fileInput" accept=".xlsx, .xls">
+    </div>
+
+    <div class="meta-info" id="metaInfo">
+        <div class="meta-item">🏫 المؤسسة: <span class="m-school">-</span></div>
+        <div class="meta-item">👨‍🏫 الأستاذ: <span class="m-teacher">-</span></div>
+        <div class="meta-item">📚 المادة: <span class="m-subject">-</span></div>
+        <div class="meta-item">👥 القسم: <span class="m-classroom">-</span></div>
+        <div class="meta-item">📊 المستوى: <span class="m-level">-</span></div>
+        <div class="meta-item">📅 السنة الدراسية: <span class="m-year">-</span></div>
+        <div class="meta-item">🔄 الدورة: <span class="m-semester">الدورة الأولى</span></div>
+    </div>
+
+    <div class="tabs" id="tabsHeaders">
+        <button class="tab-btn active" onclick="switchTab(0)">الفرض 1</button>
+        <button class="tab-btn" onclick="switchTab(1)">الفرض 2</button>
+        <button class="tab-btn" id="btn_exam3" onclick="switchTab(2)">الفرض 3</button>
+        <button class="tab-btn" onclick="switchTab(3)">الأنشطة المندمجة</button>
+        <button class="tab-btn" onclick="switchTab(4)">🎯 معدل الدورة الشامل</button>
+        <button class="tab-btn btn-evolution-tab" onclick="switchTab(5)">📈 تقرير التطور العام</button>
+    </div>
+
+    <div id="reportsContainer"></div>
+
+    <button class="btn-pdf" id="pdfBtn" onclick="window.print()">
+        📄 طباعة وحفظ التقارير كـ PDF
+    </button>
+
+    <div class="developer-credits">
+        🛠️ تـم تطويـر المنظومـة بـواسطـة: <span>الأستاذ سفيان المزكلدي</span>
+    </div>
+</div>
+
+<script>
+    let globalCurrentSheet = null;
+    let currentActiveTabIdx = 0;
+
+    document.getElementById('fileInput').addEventListener('change', handleFile, false);
+
+    function handleFile(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            globalCurrentSheet = workbook.Sheets[workbook.SheetNames[0]];
+            currentActiveTabIdx = 0; 
+            processMasarData(globalCurrentSheet);
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function updateSemesterText() {
+        const selectedSemester = document.getElementById('semesterSelect').value;
+        document.querySelectorAll('.m-semester').forEach(el => el.innerText = selectedSemester);
+        
+        if (globalCurrentSheet) {
+            processMasarData(globalCurrentSheet);
+        }
+    }
+
+    function processMasarData(sheet) {
+        const container = document.getElementById('reportsContainer');
+        container.innerHTML = '';
+
+        const school = sheet['O7'] ? sheet['O7'].v : '-';
+        const teacher = sheet['O9'] ? sheet['O9'].v : '-';
+        const subject = sheet['O11'] ? sheet['O11'].v : '-';
+        const classroom = sheet['I9'] ? sheet['I9'].v : '-';
+        const level = sheet['D9'] ? sheet['D9'].v : '-';
+        const year = sheet['D13'] ? sheet['D13'].v : '-';
+        const currentSemester = document.getElementById('semesterSelect').value;
+
+        const checkText = (level + " " + subject);
+        const isSVT = checkText.includes("علوم") && checkText.includes("الحياة") && checkText.includes("الأرض");
+
+        let activeCols = [];
+        if (isSVT) {
+            document.getElementById('btn_exam3').style.display = 'none';
+            document.body.classList.add('is-svt');
+            activeCols = ['G', 'I', null, 'K', 'TOTAL']; 
+            if (currentActiveTabIdx === 2) currentActiveTabIdx = 0;
+        } else {
+            document.getElementById('btn_exam3').style.display = 'block';
+            document.body.classList.remove('is-svt');
+            activeCols = ['G', 'I', 'K', 'M', 'TOTAL'];
+        }
+
+        document.querySelectorAll('.m-school').forEach(el => el.innerText = school);
+        document.querySelectorAll('.m-teacher').forEach(el => el.innerText = teacher);
+        document.querySelectorAll('.m-subject').forEach(el => el.innerText = subject);
+        document.querySelectorAll('.m-classroom').forEach(el => el.innerText = classroom);
+        document.querySelectorAll('.m-level').forEach(el => el.innerText = level);
+        document.querySelectorAll('.m-year').forEach(el => el.innerText = year);
+        document.querySelectorAll('.m-semester').forEach(el => el.innerText = currentSemester);
+        
+        document.getElementById('metaInfo').style.display = 'grid';
+        document.getElementById('tabsHeaders').style.display = 'flex';
+        document.getElementById('pdfBtn').style.display = 'block';
+
+        let lastRow = 18;
+        while (sheet['D' + (lastRow + 1)]) { lastRow++; }
+
+        const examNames = ['الفرض 1', 'الفرض 2', 'الفرض 3', 'الأنشطة المندمجة', `معدل الدورة ${currentSemester} الشامل`];
+        let globalStats = [];
+        let evolvedStudents = [];
+
+        for (let idx = 0; idx < 5; idx++) {
+            if (isSVT && idx === 2) {
+                globalStats.push(null);
+                continue;
+            }
+
+            let totalStudents = 0, passCount = 0;
+            let maxGrade = 0, minGrade = 20, sumGrade = 0;
+            let mutahakim = [], fiTawr = [], supportList = [];
+
+            for (let row = 18; row <= lastRow; row++) {
+                let nameCell = sheet['D' + row];
+                if (!nameCell || !nameCell.v) continue;
+                let name = nameCell.v;
+                let grade = 0;
+
+                if (idx === 4) {
+                    if (isSVT) {
+                        let v1 = sheet['G' + row] ? parseFloat(sheet['G' + row].v) : 0;
+                        let v2 = sheet['I' + row] ? parseFloat(sheet['I' + row].v) : 0;
+                        let v4 = sheet['K' + row] ? parseFloat(sheet['K' + row].v) : 0;
+                        grade = ((v1 + v2) / 2) * 0.75 + (v4 * 0.25);
+                    } else {
+                        let v1 = sheet['G' + row] ? parseFloat(sheet['G' + row].v) : 0;
+                        let v2 = sheet['I' + row] ? parseFloat(sheet['I' + row].v) : 0;
+                        let v3 = sheet['K' + row] ? parseFloat(sheet['K' + row].v) : 0;
+                        let v4 = sheet['M' + row] ? parseFloat(sheet['M' + row].v) : 0;
+                        grade = (v1 + v2 + v3 + v4) / 4;
+                    }
+                } else {
+                    let targetCol = activeCols[idx];
+                    let gradeCell = sheet[targetCol + row];
+                    if (!gradeCell || isNaN(parseFloat(gradeCell.v))) continue;
+                    grade = parseFloat(gradeCell.v);
+                }
+
+                totalStudents++;
+                sumGrade += grade;
+                if (grade > maxGrade) maxGrade = grade;
+                if (grade < minGrade) minGrade = grade;
+                if (grade >= 10) passCount++;
+
+                let studentObj = { name: name, grade: grade };
+                if (grade >= 12) { mutahakim.push(studentObj); } 
+                else if (grade >= 10 && grade < 12) { fiTawr.push(studentObj); } 
+                else { supportList.push(studentObj); }
+            }
+
+            mutahakim.sort((a, b) => b.grade - a.grade);
+            fiTawr.sort((a, b) => b.grade - a.grade);
+            supportList.sort((a, b) => b.grade - a.grade);
+
+            let avgClass = totalStudents > 0 ? (sumGrade / totalStudents).toFixed(2) : '0.00';
+            let passPercent = totalStudents > 0 ? ((passCount / totalStudents) * 100).toFixed(1) : '0';
+
+            globalStats.push({
+                total: totalStudents,
+                pass: passCount,
+                percent: passPercent,
+                avg: avgClass,
+                max: maxGrade,
+                min: minGrade === 20 ? 0 : minGrade
+            });
+
+            let pMut = totalStudents > 0 ? Math.round((mutahakim.length / totalStudents) * 100) : 0;
+            let pTaw = totalStudents > 0 ? Math.round((fiTawr.length / totalStudents) * 100) : 0;
+            let pSup = totalStudents > 0 ? Math.round((supportList.length / totalStudents) * 100) : 0;
+
+            let svgChart = `
+                <svg width="100%" height="90" viewBox="0 0 300 90" style="direction:ltr;">
+                    <rect x="10" y="10" width="200" height="15" rx="3" fill="#eaeded"/>
+                    <rect x="10" y="10" width="${pMut * 2}" height="15" rx="3" fill="#27ae60"/>
+                    <text x="220" y="22" font-family="Segoe UI" font-size="10" fill="#2c3e50" font-weight="bold">متحكم: ${pMut}%</text>
+                    
+                    <rect x="10" y="38" width="200" height="15" rx="3" fill="#eaeded"/>
+                    <rect x="10" y="38" width="${pTaw * 2}" height="15" rx="3" fill="#f39c12"/>
+                    <text x="220" y="50" font-family="Segoe UI" font-size="10" fill="#2c3e50" font-weight="bold">طور التحكم: ${pTaw}%</text>
+                    
+                    <rect x="10" y="66" width="200" height="15" rx="3" fill="#eaeded"/>
+                    <rect x="10" y="66" width="${pSup * 2}" height="15" rx="3" fill="#c0392b"/>
+                    <text x="220" y="78" font-family="Segoe UI" font-size="10" fill="#2c3e50" font-weight="bold">دعم: ${pSup}%</text>
+                </svg>
+            `;
+
+            let tabActive = idx === currentActiveTabIdx ? 'active' : '';
+            
+            let m_items = mutahakim.map(s => `<div class="student-item"><div class="st-name">👤 ${s.name}</div><div class="st-grade">${s.grade.toFixed(2)}</div></div>`).join('');
+            let f_items = fiTawr.map(s => `<div class="student-item"><div class="st-name">👤 ${s.name}</div><div class="st-grade">${s.grade.toFixed(2)}</div></div>`).join('');
+            let s_items = supportList.map(s => `<div class="student-item"><div class="st-name">👤 ${s.name}</div><div class="st-grade">${s.grade.toFixed(2)}</div></div>`).join('');
+
+            let htmlReport = `
+                <div class="report-content ${tabActive}" id="report_${idx}">
+                    <div class="print-meta-header">
+                        <div class="print-meta-cell">🏫 المؤسسة: <span>${school}</span></div>
+                        <div class="print-meta-cell">👨‍🏫 الأستاذ(ة): <span>${teacher}</span></div>
+                        <div class="print-meta-cell">📚 المادة: <span>${subject}</span></div>
+                        <div class="print-meta-cell">👥 القسم: <span>${classroom}</span></div>
+                        <div class="print-meta-cell">📊 المستوى: <span>${level}</span></div>
+                        <div class="print-meta-cell">📅 السنة الدراسية: <span>${year}</span></div>
+                        <div class="print-meta-cell">🔄 الدورة: <span>${currentSemester}</span></div>
+                    </div>
+
+                    <h2>📊 لوحة تقرير نتائج: ${examNames[idx]}</h2>
+                    
+                    <div class="grid-layout">
+                        <div>
+                            <div class="card">
+                                <h3>📈 المؤشرات الرقمية العامة</h3>
+                                <table>
+                                    <tr><td>عدد التلاميذ الإجمالي</td><td><strong>${totalStudents}</strong> تلميذ(ة)</td></tr>
+                                    <tr><td>عدد الحاصلين على المعدل (&ge; 10)</td><td style="color:var(--success); font-weight:bold;">${passCount} تلميذ(ة)</td></tr>
+                                    <tr><td>نسبة النجاح العامة</td><td style="font-weight:bold; background:#ebf7ee">${passPercent}%</td></tr>
+                                    <tr><td>معدل القسم العام</td><td style="color:var(--accent); font-weight:bold;">${avgClass}</td></tr>
+                                    <tr><td>أعلى نقطة بالقسم</td><td style="color:var(--success); font-weight:bold;">${maxGrade}</td></tr>
+                                    <tr><td>أدنى نقطة بالقسم</td><td style="color:var(--danger); font-weight:bold;">${minGrade === 20 ? 0 : minGrade}</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="card">
+                                <h3>📊 توزيع مستويات التحكم</h3>
+                                <div class="chart-box">
+                                    ${svgChart}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top:5px;">
+                        <h3>📋 عتبات الدعم والتحكم التربوي الاسمي (مرتبة تناقصياً)</h3>
+                        <div class="rosters">
+                            <div class="roster-col col-mutahakim">
+                                <h4>🟢 متحكم (12-20) [${mutahakim.length}]</h4>
+                                <div class="students-list-container">${m_items || '<div style="text-align:center;color:#7f8c8d;font-size:11px;padding:10px;">لا يوجد</div>'}</div>
+                            </div>
+                            <div class="roster-col col-fitawr">
+                                <h4>🟡 في طور التحكم (10-12) [${fiTawr.length}]</h4>
+                                <div class="students-list-container">${f_items || '<div style="text-align:center;color:#7f8c8d;font-size:11px;padding:10px;">لا يوجد</div>'}</div>
+                            </div>
+                            <div class="roster-col col-support">
+                                <h4>🔴 غير متحكم (<10) [${supportList.length}]</h4>
+                                <div class="students-list-container">${s_items || '<div style="text-align:center;color:#7f8c8d;font-size:11px;padding:10px;">لا يوجد</div>'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += htmlReport;
+        }
+
+        for (let row = 18; row <= lastRow; row++) {
+            let nameCell = sheet['D' + row];
+            if (!nameCell || !nameCell.v) continue;
+            let name = nameCell.v;
+
+            let f1 = sheet['G' + row] ? parseFloat(sheet['G' + row].v) : 0;
+            let f2 = sheet['I' + row] ? parseFloat(sheet['I' + row].v) : 0;
+            
+            if (isSVT) {
+                let ans = sheet['K' + row] ? parseFloat(sheet['K' + row].v) : 0;
+                if (f2 >= f1 && ans >= f2) {
+                    evolvedStudents.push({ name: name, path: `ف1: ${f1} ➔ ف2: ${f2} ➔ أنشطة: ${ans}` });
+                }
+            } else {
+                let f3 = sheet['K' + row] ? parseFloat(sheet['K' + row].v) : 0;
+                let ans = sheet['M' + row] ? parseFloat(sheet['M' + row].v) : 0;
+                if (f2 >= f1 && f3 >= f2 && ans >= f3) {
+                    evolvedStudents.push({ name: name, path: `ف1: ${f1} ➔ ف2: ${f2} ➔ ف3: ${f3} ➔ أنشطة: ${ans}` });
+                }
+            }
+        }
+
+        let tableHeaderRow = isSVT ? 
+            `<tr><th>المؤشر الرقمي</th><th>الفرض 1</th><th>الفرض 2</th><th>الأنشطة المندمجة</th><th>معدل الدورة الشامل</th></tr>` :
+            `<tr><th>المؤشر الرقمي</th><th>الفرض 1</th><th>الفرض 2</th><th>الفرض 3</th><th>الأنشطة المندمجة</th><th>معدل الدورة الشامل</th></tr>`;
+
+        let tableBodyRows = '';
+        if (isSVT) {
+            tableBodyRows = `
+                <tr><td>نسبة النجاح العامة</td><td>${globalStats[0].percent}%</td><td>${globalStats[1].percent}%</td><td>${globalStats[3].percent}%</td><td style="background:#ebf7ee; font-weight:bold;">${globalStats[4].percent}%</td></tr>
+                <tr><td>عدد الحاصلين على المعدل</td><td style="color:var(--success);">${globalStats[0].pass}</td><td style="color:var(--success);">${globalStats[1].pass}</td><td style="color:var(--success);">${globalStats[3].pass}</td><td style="color:var(--success); font-weight:bold; background:#ebf7ee;">${globalStats[4].pass}</td></tr>
+                <tr><td>معدل القسم العام</td><td style="font-weight:bold; color:var(--accent);">${globalStats[0].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[1].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[3].avg}</td><td style="background:#e8f4fd; font-weight:bold; color:var(--accent);">${globalStats[4].avg}</td></tr>
+                <tr><td>أعلى نقطة بالقسم</td><td style="color:var(--success);">${globalStats[0].max}</td><td style="color:var(--success);">${globalStats[1].max}</td><td style="color:var(--success);">${globalStats[3].max}</td><td style="color:var(--success); font-weight:bold;">${globalStats[4].max}</td></tr>
+                <tr><td>أدنى نقطة بالقسم</td><td style="color:var(--danger);">${globalStats[0].min}</td><td style="color:var(--danger);">${globalStats[1].min}</td><td style="color:var(--danger);">${globalStats[3].min}</td><td style="color:var(--danger); font-weight:bold;">${globalStats[4].min}</td></tr>
+            `;
+        } else {
+            tableBodyRows = `
+                <tr><td>نسبة النجاح العامة</td><td>${globalStats[0].percent}%</td><td>${globalStats[1].percent}%</td><td>${globalStats[2].percent}%</td><td>${globalStats[3].percent}%</td><td style="background:#ebf7ee; font-weight:bold;">${globalStats[4].percent}%</td></tr>
+                <tr><td>عدد الحاصلين على المعدل</td><td style="color:var(--success);">${globalStats[0].pass}</td><td style="color:var(--success);">${globalStats[1].pass}</td><td style="color:var(--success);">${globalStats[2].pass}</td><td style="color:var(--success);">${globalStats[3].pass}</td><td style="color:var(--success); font-weight:bold; background:#ebf7ee;">${globalStats[4].pass}</td></tr>
+                <tr><td>معدل القسم العام</td><td style="font-weight:bold; color:var(--accent);">${globalStats[0].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[1].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[2].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[3].avg}</td><td style="background:#e8f4fd; font-weight:bold; color:var(--accent);">${globalStats[4].avg}</td></tr>
+                <tr><td>أعلى نقطة بالقسم</td><td style="color:var(--success);">${globalStats[0].max}</td><td style="color:var(--success);">${globalStats[1].max}</td><td style="color:var(--success);">${globalStats[2].max}</td><td style="color:var(--success);">${globalStats[3].max}</td><td style="color:var(--success); font-weight:bold;">${globalStats[4].max}</td></tr>
+                <tr><td>أدنى نقطة بالقسم</td><td style="color:var(--danger);">${globalStats[0].min}</td><td style="color:var(--danger);">${globalStats[1].min}</td><td style="color:var(--danger);">${globalStats[2].min}</td><td style="color:var(--danger);">${globalStats[3].min}</td><td style="color:var(--danger); font-weight:bold;">${globalStats[4].min}</td></tr>
+            `;
+        }
+
+        let ev_items = evolvedStudents.map(s => `<div class="student-item"><div class="st-name">📈 <strong>${s.name}</strong></div><div class="st-grade">${s.path}</div></div>`).join('');
+
+        let tabActiveEv = currentActiveTabIdx === 5 ? 'active' : '';
+
+        let htmlEvolutionReport = `
+            <div class="report-content ${tabActiveEv}" id="report_5">
+                <div class="print-meta-header">
+                    <div class="print-meta-cell">🏫 المؤسسة: <span>${school}</span></div>
+                    <div class="print-meta-cell">👨‍🏫 الأستاذ(ة): <span>${teacher}</span></div>
+                    <div class="print-meta-cell">📚 المادة: <span>${subject}</span></div>
+                    <div class="print-meta-cell">👥 القسم: <span>${classroom}</span></div>
+                    <div class="print-meta-cell">📊 المستوى: <span>${level}</span></div>
+                    <div class="print-meta-cell">📅 السنة الدراسية: <span>${year}</span></div>
+                    <div class="print-meta-cell">🔄 الدورة: <span>${currentSemester}</span></div>
+                </div>
+
+                <h2>📈 تقرير لوحة التطور والتحصيل الشامل - الدورة ${currentSemester}</h2>
+                
+                <div class="card" style="margin-bottom: 15px;">
+                    <h3>📊 جدول مقارنة المؤشرات الرقمية العامة ومدى التطور</h3>
+                    <table>
+                        <thead>
+                            ${tableHeaderRow}
+                        </thead>
+                        <tbody>
+                            ${tableBodyRows}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>📋 لائحة شرف التلاميذ الذين حققوا تطوراً مستمراً تصاعدياً [${evolvedStudents.length}]</h3>
+                    <div class="rosters" style="margin-top:0;">
+                        <div class="roster-col col-evolution" style="padding:0;">
+                            <div class="students-list-container" style="max-height:380px; padding:8px;">
+                                ${ev_items || '<div style="text-align:center;color:#7f8c8d;font-size:12px;padding:20px;">لم يتم رصد تلاميذ بتطور تصاعدي دائم في هذا القسم.</div>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += htmlEvolutionReport;
+        
+        switchTab(currentActiveTabIdx);
+    }
+
+    function switchTab(idx) {
+        currentActiveTabIdx = idx; 
+        let buttons = document.querySelectorAll('.tab-btn');
+        let reports = document.querySelectorAll('.report-content');
+        
+        buttons.forEach((b, i) => {
+            if(i === idx) b.classList.add('active');
+            else b.classList.remove('active');
+        });
+
+        reports.forEach((r) => {
+            if (r) {
+                let rIdx = parseInt(r.id.split('_')[1]);
+                if(rIdx === idx) r.classList.add('active');
+                else r.classList.remove('active');
+            }
+        });
+    }
+</script>
+</body>
+</html>
