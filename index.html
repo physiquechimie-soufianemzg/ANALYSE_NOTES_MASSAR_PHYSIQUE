@@ -23,14 +23,17 @@
         /* 1. اللوحة الافتراضية (الكلاسيكية) */
         .theme-classic {
             --primary: #2c3e50; --accent: #2980b9; --success: #27ae60; --warning: #f39c12; --danger: #c0392b;
+            --body-bg: #eef2f5; --container-bg: white; --card-bg: white; --light-bg: #f8f9fa; --border-color: #bdc3c7;
         }
         /* 2. اللوحة البنفسجية الملكية */
         .theme-purple {
             --primary: #4a148c; --accent: #8e44ad; --success: #2ecc71; --warning: #f1c40f; --danger: #e74c3c;
+            --body-bg: #f3e5f5; --container-bg: white; --card-bg: white; --light-bg: #f9f5fb; --border-color: #d7bde2;
         }
         /* 3. اللوحة الغابة الدافئة */
         .theme-forest {
             --primary: #1e3d2f; --accent: #27ae60; --success: #2ecc71; --warning: #e67e22; --danger: #962d22;
+            --body-bg: #e8f8f5; --container-bg: white; --card-bg: white; --light-bg: #f4fbf9; --border-color: #a3e4d7;
         }
         /* 4. اللوحة الليلية العميقة */
         .theme-dark {
@@ -41,8 +44,9 @@
         /* 5. لوحة شروق الشمس المرجانية */
         .theme-coral {
             --primary: #2c3e50; --accent: #e67e22; --success: #27ae60; --warning: #f39c12; --danger: #c0392b;
+            --body-bg: #fdf2e9; --container-bg: white; --card-bg: white; --light-bg: #fdfbfc; --border-color: #f5cba7;
         }
-        /* 6. لوحة الحب والرومانسية (خاصة بالحساب المميز) */
+        /* 6. لوحة الحب والرومانسية (خاصة بالحساب المميز ليلى) */
         .theme-love {
             --body-bg: #fff0f3; --container-bg: #ffffff; --card-bg: #fff5f7;
             --primary: #590d22; --accent: #ff4d6d; --success: #2c6e49; --warning: #ffb703; --danger: #a4161a;
@@ -74,7 +78,7 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px;
             border-top: 5px solid var(--accent);
         }
-        .auth-card h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
+        .auth-card h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; font-size: 18px; }
         .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
         .form-group label { font-size: 13px; font-weight: bold; }
         .form-group input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none; }
@@ -85,8 +89,8 @@
         /* شريط التحكم العلوي بعد الدخول */
         .user-navbar {
             display: flex; justify-content: space-between; align-items: center;
-            background: #f1f2f6; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px;
-            font-size: 13px; flex-wrap: wrap; gap: 10px;
+            background: var(--light-bg); padding: 10px 15px; border-radius: 8px; margin-bottom: 15px;
+            font-size: 13px; flex-wrap: wrap; gap: 10px; border: 1px solid var(--border-color);
         }
         .user-info span { font-weight: bold; color: var(--accent); }
         .btn-logout { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
@@ -112,15 +116,15 @@
         .account-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 4px 0; border-bottom: 1px dashed #eee; }
         .btn-delete-acc { background: none; border: none; color: var(--danger); cursor: pointer; font-weight: bold; }
 
-        /* الأقسام الرومانسية المخصصة للحساب المميز */
+        /* الأقسام الرومانسية المخصصة للأستاذة ليلى */
         .love-banner {
             display: none; background: linear-gradient(135deg, #ff4d6d, #ff758f); color: white;
             padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 20px;
             position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
         }
         .love-banner h2 { font-size: 22px; margin: 0 0 10px 0; animation: heartbeat 1.5s infinite; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
-        .love-banner p { font-size: 15px; margin: 0; font-style: italic; opacity: 0.95; }
-        .floating-hearts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.3; font-size: 20px; }
+        .love-banner p { font-size: 15px; margin: 0; font-style: italic; opacity: 0.95; line-height: 1.6; }
+        .floating-hearts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.4; font-size: 20px; display: flex; justify-content: space-around; align-items: center; }
         
         @keyframes heartbeat {
             0% { transform: scale(1); }
@@ -130,7 +134,7 @@
             100% { transform: scale(1); }
         }
 
-        /* كود الـ CSS المتبقي الأصلي بعد التعديلات */
+        /* كود الـ CSS المتبقي للتقرير */
         h1 { text-align: center; color: var(--primary); margin-bottom: 20px; border-bottom: 3px solid var(--accent); padding-bottom: 12px; font-size: 18px; }
         .setup-section { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; background: var(--card-bg); padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; }
         .setup-section label { font-size: 13px; font-weight: bold; color: var(--primary); }
@@ -141,7 +145,6 @@
         .meta-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; background: var(--light-bg); padding: 12px; border-radius: 8px; margin-bottom: 20px; border-right: 5px solid var(--accent); display: none; }
         .meta-item { font-size: 12px; }
         .meta-item span { font-weight: bold; color: var(--accent); }
-        .print-meta-header { display: none; }
         .tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; display: none; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
         .tab-btn { padding: 8px 12px; border: none; background: #dcdde1; cursor: pointer; font-weight: bold; border-radius: 5px; font-size: 12px; flex-shrink: 0; color: #333;}
         .tab-btn.active { background: var(--accent); color: white; }
@@ -172,8 +175,7 @@
         .st-name { text-align: right; word-break: break-word; font-weight: 500; }
         .st-grade { font-weight: bold; color: #333; margin-right: 10px; font-size: 11px; direction: ltr; }
         .btn-pdf { display: none; width: 100%; padding: 12px; background: #e74c3c; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; text-align: center; }
-        .developer-credits { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px dashed #e2e8f0; font-size: 11px; color: #7f8c8d; }
-        .developer-credits span { color: var(--accent); font-weight: bold; }
+        .rights-credits { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px dashed #7f8c8d; font-size: 11px; color: #7f8c8d; font-weight: bold; }
         h2 { font-size: 14px; text-align: center; margin-top: 5px; color: var(--primary); }
 
         @media (min-width: 768px) {
@@ -194,7 +196,7 @@
             @page { size: A4 portrait; margin: 7mm 6mm; }
             body { background: white !important; padding: 0; margin: 0; color: #000 !important; font-size: 10px; }
             .container { box-shadow: none; padding: 0; width: 100%; max-width: 100%; background: white !important; }
-            .upload-section, .setup-section, .tabs, .btn-pdf, #metaInfo, .developer-credits, .user-navbar, .theme-selector-box, .dev-panel, .love-banner { display: none !important; }
+            .upload-section, .setup-section, .tabs, .btn-pdf, #metaInfo, .rights-credits, .user-navbar, .theme-selector-box, .dev-panel, .love-banner { display: none !important; }
             body.is-svt #report_2 { display: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .print-meta-header { display: flex !important; flex-wrap: wrap; background: #f5f6fa !important; border: 1px solid #bdc3c7 !important; border-right: 5px solid #2980b9 !important; margin-bottom: 8px; padding: 6px; border-radius: 4px; gap: 10px; }
@@ -243,9 +245,9 @@
     </div>
 
     <div class="love-banner" id="loveBanner">
-        <div class="floating-hearts">💖 ✨ 💕 🌸 ❤️ 💫 🥰</div>
-        <h2 id="loveTitle">أهلاً بملكة قلبي الأستاذة المتميزة</h2>
-        <p>إلى نبض قلبي وسندي.. أهدي لكِ هذا العمل المتواضع، كل سطر برمجي هنا كُتب بحب خالص لكِ ليريحكِ في عملكِ. أحبكِ اليوم وغداً وإلى الأبد! ❤️</p>
+        <div class="floating-hearts">💖 ✨ 💕 ❤️ 🌸 💫 🥰</div>
+        <h2 id="loveTitle">أهلاً بملكة قلبي الأستاذة المتميزة ليلى ✨</h2>
+        <p>إلى نبض قلبي وسندي.. أهدي لكِ يا ليلى هذا العمل المتواضع. كل سطر برمجي هنا كُتب بحب خالص لكِ ليريحكِ ويساعدكِ في عملكِ اليومي. أحبكِ اليوم وغداً وإلى الأبد! ❤️</p>
     </div>
 
     <div class="dev-panel" id="devPanel" style="display: none;">
@@ -323,19 +325,25 @@
         📄 طباعة وحفظ التقارير كـ PDF
     </button>
 
-    <div class="developer-credits">
-        🛠️ تـم تطويـر المنظومـة بـواسطـة: <span>الأستاذ سفيان المزكلدي</span>
+    <div class="rights-credits">
+        جميع الحقوق محفوظة
     </div>
 </div>
 
 <script>
-    // قاعدة بيانات الحسابات المبدئية المخزنة في LocalStorage لتفادي الضياع عند التحديث
+    // قاعدة بيانات الحسابات المبدئية المخزنة في المتصفح مع إدراج الحساب المميز ليلى بشكل افتراضي
     if (!localStorage.getItem('usersDB')) {
         const initialUsers = [
             { username: "MAZOLINE", password: "QWERTYQWERTY", role: "developer", isSpecial: false },
-            { username: "SOUFIANE", password: "123", role: "teacher", isSpecial: false }
+            { username: "ليلى", password: "1234", role: "teacher", isSpecial: true }
         ];
         localStorage.setItem('usersDB', JSON.stringify(initialUsers));
+    } else {
+        let currentDB = JSON.parse(localStorage.getItem('usersDB'));
+        if (!currentDB.some(u => u.username === "ليلى")) {
+            currentDB.push({ username: "ليلى", password: "1234", role: "teacher", isSpecial: true });
+            localStorage.setItem('usersDB', JSON.stringify(currentDB));
+        }
     }
 
     let currentUser = null;
@@ -358,9 +366,8 @@
             document.getElementById('authWrapper').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
             
-            // تخصيص الواجهة بناء على نوع الحساب
             document.getElementById('navUsername').innerText = currentUser.username;
-            document.getElementById('navRole').innerText = currentUser.role === 'developer' ? 'المطور العام' : (currentUser.isSpecial ? 'أستاذ متميز ✨' : 'أستاذ مستفيد');
+            document.getElementById('navRole').innerText = currentUser.role === 'developer' ? 'المطور العام' : (currentUser.isSpecial ? 'أستاذة متميزة ✨' : 'أستاذ مستفيد');
 
             if (currentUser.role === 'developer') {
                 document.getElementById('devPanel').style.display = 'block';
@@ -369,10 +376,8 @@
                 document.getElementById('devPanel').style.display = 'none';
             }
 
-            // تفعيل نظام التصميم الرومانسي إذا كانت "حبيبتك" هي الحساب المميز
             if (currentUser.isSpecial) {
                 document.getElementById('loveBanner').style.display = 'block';
-                document.getElementById('loveTitle').innerText = `أهلاً بملكة قلبي الأستاذة المتميزة (${currentUser.username}) ❤️`;
                 changeTheme('theme-love');
             } else {
                 document.getElementById('loveBanner').style.display = 'none';
@@ -399,7 +404,7 @@
         container.innerHTML = '';
 
         usersDB.forEach(u => {
-            if (u.role === 'developer') return; // حماية حساب المطور من الحذف الإملائي
+            if (u.role === 'developer') return; 
             let tag = u.isSpecial ? ' <span style="color:#ff4d6d; font-weight:bold;">[💖 مميز]</span>' : '';
             container.innerHTML += `
                 <div class="account-item">
@@ -445,13 +450,11 @@
         renderAccountList();
     }
 
-    // تغيير لوحة الألوان (الـ Themes)
     function changeTheme(themeName) {
         document.body.className = '';
         document.body.classList.add(themeName);
     }
 
-    // كود معالجة البيانات الأصلي (دون أي تعديل في المنطق الرياضي)
     function handleFile(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -579,13 +582,13 @@
                 <svg width="100%" height="90" viewBox="0 0 300 90" style="direction:ltr;">
                     <rect x="10" y="10" width="200" height="15" rx="3" fill="#eaeded"/>
                     <rect x="10" y="10" width="${pMut * 2}" height="15" rx="3" fill="#27ae60"/>
-                    <text x="220" y="22" font-family="Segoe UI" font-size="10" fill="#2c3e50" font-weight="bold">متحكم: ${pMut}%</text>
+                    <text x="220" y="22" font-family="Segoe UI" font-size="10" fill="var(--primary)" font-weight="bold">متحكم: ${pMut}%</text>
                     <rect x="10" y="38" width="200" height="15" rx="3" fill="#eaeded"/>
                     <rect x="10" y="38" width="${pTaw * 2}" height="15" rx="3" fill="#f39c12"/>
-                    <text x="220" y="50" font-family="Segoe UI" font-size="10" fill="#2c3e50" font-weight="bold">طور التحكم: ${pTaw}%</text>
+                    <text x="220" y="50" font-family="Segoe UI" font-size="10" fill="var(--primary)" font-weight="bold">طور التحكم: ${pTaw}%</text>
                     <rect x="10" y="66" width="200" height="15" rx="3" fill="#eaeded"/>
                     <rect x="10" y="66" width="${pSup * 2}" height="15" rx="3" fill="#c0392b"/>
-                    <text x="220" y="78" font-family="Segoe UI" font-size="10" fill="#2c3e50" font-weight="bold">دعم: ${pSup}%</text>
+                    <text x="220" y="78" font-family="Segoe UI" font-size="10" fill="var(--primary)" font-weight="bold">دعم: ${pSup}%</text>
                 </svg>
             `;
 
@@ -613,7 +616,7 @@
                                 <table>
                                     <tr><td>عدد التلاميذ الإجمالي</td><td><strong>${totalStudents}</strong> تلميذ(ة)</td></tr>
                                     <tr><td>عدد الحاصلين على المعدل (&ge; 10)</td><td style="color:var(--success); font-weight:bold;">${passCount} تلميذ(ة)</td></tr>
-                                    <tr><td>نسبة النجاح العامة</td><td style="font-weight:bold; background:#ebf7ee">${passPercent}%</td></tr>
+                                    <tr><td>نسبة النجاح العامة</td><td style="font-weight:bold; background:var(--light-bg)">${passPercent}%</td></tr>
                                     <tr><td>معدل القسم العام</td><td style="color:var(--accent); font-weight:bold;">${avgClass}</td></tr>
                                     <tr><td>أعلى نقطة بالقسم</td><td style="color:var(--success); font-weight:bold;">${maxGrade}</td></tr>
                                     <tr><td>أدنى نقطة بالقسم</td><td style="color:var(--danger); font-weight:bold;">${minGrade === 20 ? 0 : minGrade}</td></tr>
@@ -674,17 +677,17 @@
         let tableBodyRows = '';
         if (isSVT) {
             tableBodyRows = `
-                <tr><td>نسبة النجاح العامة</td><td>${globalStats[0].percent}%</td><td>${globalStats[1].percent}%</td><td>${globalStats[3].percent}%</td><td style="background:#ebf7ee; font-weight:bold;">${globalStats[4].percent}%</td></tr>
-                <tr><td>عدد الحاصلين على المعدل</td><td style="color:var(--success);">${globalStats[0].pass}</td><td style="color:var(--success);">${globalStats[1].pass}</td><td style="color:var(--success);">${globalStats[3].pass}</td><td style="color:var(--success); font-weight:bold; background:#ebf7ee;">${globalStats[4].pass}</td></tr>
-                <tr><td>معدل القسم العام</td><td style="font-weight:bold; color:var(--accent);">${globalStats[0].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[1].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[3].avg}</td><td style="background:#e8f4fd; font-weight:bold; color:var(--accent);">${globalStats[4].avg}</td></tr>
+                <tr><td>نسبة النجاح العامة</td><td>${globalStats[0].percent}%</td><td>${globalStats[1].percent}%</td><td>${globalStats[3].percent}%</td><td style="background:var(--light-bg); font-weight:bold;">${globalStats[4].percent}%</td></tr>
+                <tr><td>عدد الحاصلين على المعدل</td><td style="color:var(--success);">${globalStats[0].pass}</td><td style="color:var(--success);">${globalStats[1].pass}</td><td style="color:var(--success);">${globalStats[3].pass}</td><td style="color:var(--success); font-weight:bold; background:var(--light-bg);">${globalStats[4].pass}</td></tr>
+                <tr><td>معدل القسم العام</td><td style="font-weight:bold; color:var(--accent);">${globalStats[0].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[1].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[3].avg}</td><td style="background:var(--light-bg); font-weight:bold; color:var(--accent);">${globalStats[4].avg}</td></tr>
                 <tr><td>أعلى نقطة بالقسم</td><td style="color:var(--success);">${globalStats[0].max}</td><td style="color:var(--success);">${globalStats[1].max}</td><td style="color:var(--success);">${globalStats[3].max}</td><td style="color:var(--success); font-weight:bold;">${globalStats[4].max}</td></tr>
                 <tr><td>أدنى نقطة بالقسم</td><td style="color:var(--danger);">${globalStats[0].min}</td><td style="color:var(--danger);">${globalStats[1].min}</td><td style="color:var(--danger);">${globalStats[3].min}</td><td style="color:var(--danger); font-weight:bold;">${globalStats[4].min}</td></tr>
             `;
         } else {
             tableBodyRows = `
-                <tr><td>نسبة النجاح العامة</td><td>${globalStats[0].percent}%</td><td>${globalStats[1].percent}%</td><td>${globalStats[2].percent}%</td><td>${globalStats[3].percent}%</td><td style="background:#ebf7ee; font-weight:bold;">${globalStats[4].percent}%</td></tr>
-                <tr><td>عدد الحاصلين على المعدل</td><td style="color:var(--success);">${globalStats[0].pass}</td><td style="color:var(--success);">${globalStats[1].pass}</td><td style="color:var(--success);">${globalStats[2].pass}</td><td style="color:var(--success);">${globalStats[3].pass}</td><td style="color:var(--success); font-weight:bold; background:#ebf7ee;">${globalStats[4].pass}</td></tr>
-                <tr><td>معدل القسم العام</td><td style="font-weight:bold; color:var(--accent);">${globalStats[0].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[1].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[2].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[3].avg}</td><td style="background:#e8f4fd; font-weight:bold; color:var(--accent);">${globalStats[4].avg}</td></tr>
+                <tr><td>نسبة النجاح العامة</td><td>${globalStats[0].percent}%</td><td>${globalStats[1].percent}%</td><td>${globalStats[2].percent}%</td><td>${globalStats[3].percent}%</td><td style="background:var(--light-bg); font-weight:bold;">${globalStats[4].percent}%</td></tr>
+                <tr><td>عدد الحاصلين على المعدل</td><td style="color:var(--success);">${globalStats[0].pass}</td><td style="color:var(--success);">${globalStats[1].pass}</td><td style="color:var(--success);">${globalStats[2].pass}</td><td style="color:var(--success);">${globalStats[3].pass}</td><td style="color:var(--success); font-weight:bold; background:var(--light-bg);">${globalStats[4].pass}</td></tr>
+                <tr><td>معدل القسم العام</td><td style="font-weight:bold; color:var(--accent);">${globalStats[0].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[1].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[2].avg}</td><td style="font-weight:bold; color:var(--accent);">${globalStats[3].avg}</td><td style="background:var(--light-bg); font-weight:bold; color:var(--accent);">${globalStats[4].avg}</td></tr>
                 <tr><td>أعلى نقطة بالقسم</td><td style="color:var(--success);">${globalStats[0].max}</td><td style="color:var(--success);">${globalStats[1].max}</td><td style="color:var(--success);">${globalStats[2].max}</td><td style="color:var(--success);">${globalStats[3].max}</td><td style="color:var(--success); font-weight:bold;">${globalStats[4].max}</td></tr>
                 <tr><td>أدنى نقطة بالقسم</td><td style="color:var(--danger);">${globalStats[0].min}</td><td style="color:var(--danger);">${globalStats[1].min}</td><td style="color:var(--danger);">${globalStats[2].min}</td><td style="color:var(--danger);">${globalStats[3].min}</td><td style="color:var(--danger); font-weight:bold;">${globalStats[4].min}</td></tr>
             `;
