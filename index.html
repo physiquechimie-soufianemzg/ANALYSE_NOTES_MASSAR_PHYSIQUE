@@ -6,6 +6,7 @@
     <title>احصاءات خاصة بنقط المراقبة المستمرة</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+        /* لوحات الألوان والأنماط الأساسية */
         :root {
             --primary: #2c3e50;
             --accent: #2980b9;
@@ -14,170 +15,166 @@
             --danger: #c0392b;
             --light-bg: #f8f9fa;
             --border-color: #bdc3c7;
+            --body-bg: #eef2f5;
+            --container-bg: white;
+            --card-bg: white;
         }
+
+        /* 1. اللوحة الافتراضية (الكلاسيكية) */
+        .theme-classic {
+            --primary: #2c3e50; --accent: #2980b9; --success: #27ae60; --warning: #f39c12; --danger: #c0392b;
+        }
+        /* 2. اللوحة البنفسجية الملكية */
+        .theme-purple {
+            --primary: #4a148c; --accent: #8e44ad; --success: #2ecc71; --warning: #f1c40f; --danger: #e74c3c;
+        }
+        /* 3. اللوحة الغابة الدافئة */
+        .theme-forest {
+            --primary: #1e3d2f; --accent: #27ae60; --success: #2ecc71; --warning: #e67e22; --danger: #962d22;
+        }
+        /* 4. اللوحة الليلية العميقة */
+        .theme-dark {
+            --body-bg: #121212; --container-bg: #1e1e1e; --card-bg: #2d2d2d;
+            --primary: #ffffff; --accent: #3498db; --success: #2ecc71; --warning: #f1c40f; --danger: #e74c3c;
+            --border-color: #444; --light-bg: #2d2d2d;
+        }
+        /* 5. لوحة شروق الشمس المرجانية */
+        .theme-coral {
+            --primary: #2c3e50; --accent: #e67e22; --success: #27ae60; --warning: #f39c12; --danger: #c0392b;
+        }
+        /* 6. لوحة الحب والرومانسية (خاصة بالحساب المميز) */
+        .theme-love {
+            --body-bg: #fff0f3; --container-bg: #ffffff; --card-bg: #fff5f7;
+            --primary: #590d22; --accent: #ff4d6d; --success: #2c6e49; --warning: #ffb703; --danger: #a4161a;
+            --border-color: #ffb3c1; --light-bg: #fff0f3;
+        }
+
         *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eef2f5;
+            background-color: var(--body-bg);
             margin: 0; padding: 10px; color: var(--primary);
+            transition: all 0.3s ease;
         }
         .container {
             max-width: 1150px;
             margin: 0 auto;
-            background: white;
+            background: var(--container-bg);
             padding: 15px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
         }
-        h1 {
-            text-align: center;
-            color: var(--primary);
-            margin-bottom: 20px;
-            border-bottom: 3px solid var(--accent);
-            padding-bottom: 12px;
-            font-size: 18px;
-        }
         
-        .setup-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-            background: #fff;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+        /* شاشة تسجيل الدخول */
+        .auth-wrapper {
+            display: flex; justify-content: center; align-items: center; min-height: 90vh;
         }
-        .setup-section label {
-            font-size: 13px;
-            font-weight: bold;
-            color: var(--primary);
+        .auth-card {
+            background: white; padding: 30px; border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px;
+            border-top: 5px solid var(--accent);
         }
-        .setup-section select {
-            padding: 10px;
-            font-size: 13px;
-            font-family: inherit;
-            border: 2px solid var(--accent);
-            border-radius: 6px;
-            outline: none;
-            background-color: #fcfcfc;
-            cursor: pointer;
+        .auth-card h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 13px; font-weight: bold; }
+        .form-group input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none; }
+        .form-group input:focus { border-color: var(--accent); }
+        .btn-login { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        .login-error { color: var(--danger); font-size: 12px; margin-top: 5px; text-align: center; display: none; }
+
+        /* شريط التحكم العلوي بعد الدخول */
+        .user-navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f1f2f6; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px;
+            font-size: 13px; flex-wrap: wrap; gap: 10px;
+        }
+        .user-info span { font-weight: bold; color: var(--accent); }
+        .btn-logout { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        /* قائمة تبديل الثيمات (لوحات الألوان) */
+        .theme-selector-box {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;
+            padding: 10px; background: var(--light-bg); border-radius: 6px; border: 1px dashed var(--border-color);
+        }
+        .theme-btn {
+            width: 25px; height: 25px; border-radius: 50%; border: 2px solid white; cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s;
+        }
+        .theme-btn:hover { transform: scale(1.2); }
+
+        /* لوحة المطور */
+        .dev-panel {
+            background: #ebf5fb; border: 2px solid #a9cce3; border-radius: 8px; padding: 15px; margin-bottom: 20px;
+        }
+        .dev-panel h3 { margin-top: 0; color: #2471a3; font-size: 15px; border-bottom: 1px solid #a9cce3; padding-bottom: 5px; }
+        .dev-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 10px; }
+        .account-list { background: white; padding: 10px; border-radius: 6px; max-height: 150px; overflow-y: auto; border: 1px solid #ccc; }
+        .account-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 4px 0; border-bottom: 1px dashed #eee; }
+        .btn-delete-acc { background: none; border: none; color: var(--danger); cursor: pointer; font-weight: bold; }
+
+        /* الأقسام الرومانسية المخصصة للحساب المميز */
+        .love-banner {
+            display: none; background: linear-gradient(135deg, #ff4d6d, #ff758f); color: white;
+            padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 20px;
+            position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+        }
+        .love-banner h2 { font-size: 22px; margin: 0 0 10px 0; animation: heartbeat 1.5s infinite; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .love-banner p { font-size: 15px; margin: 0; font-style: italic; opacity: 0.95; }
+        .floating-hearts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.3; font-size: 20px; }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.03); }
+            40% { transform: scale(1); }
+            60% { transform: scale(1.03); }
+            100% { transform: scale(1); }
         }
 
-        .upload-section {
-            border: 2px dashed var(--accent);
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px;
-            background: var(--light-bg);
-            cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 20px;
-        }
+        /* كود الـ CSS المتبقي الأصلي بعد التعديلات */
+        h1 { text-align: center; color: var(--primary); margin-bottom: 20px; border-bottom: 3px solid var(--accent); padding-bottom: 12px; font-size: 18px; }
+        .setup-section { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; background: var(--card-bg); padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; }
+        .setup-section label { font-size: 13px; font-weight: bold; color: var(--primary); }
+        .setup-section select { padding: 10px; font-size: 13px; font-family: inherit; border: 2px solid var(--accent); border-radius: 6px; outline: none; background-color: var(--container-bg); color: var(--primary); cursor: pointer; }
+        .upload-section { border: 2px dashed var(--accent); padding: 20px; text-align: center; border-radius: 8px; background: var(--light-bg); cursor: pointer; transition: 0.2s; margin-bottom: 20px; }
         .upload-section p { font-size: 14px; font-weight: bold; color: var(--accent); margin: 0; }
         .upload-section input { display: none; }
-        
-        .meta-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            background: #ecf0f1;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-right: 5px solid var(--accent);
-            display: none;
-        }
+        .meta-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; background: var(--light-bg); padding: 12px; border-radius: 8px; margin-bottom: 20px; border-right: 5px solid var(--accent); display: none; }
         .meta-item { font-size: 12px; }
         .meta-item span { font-weight: bold; color: var(--accent); }
-
         .print-meta-header { display: none; }
-
-        .tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 10px;
-            display: none;
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
-        .tab-btn {
-            padding: 8px 12px;
-            border: none;
-            background: #dcdde1;
-            cursor: pointer;
-            font-weight: bold;
-            border-radius: 5px;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
+        .tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; display: none; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+        .tab-btn { padding: 8px 12px; border: none; background: #dcdde1; cursor: pointer; font-weight: bold; border-radius: 5px; font-size: 12px; flex-shrink: 0; color: #333;}
         .tab-btn.active { background: var(--accent); color: white; }
         .tab-btn.btn-evolution-tab { background: #8e44ad; color: white; }
         .tab-btn.btn-evolution-tab.active { background: #5b2c6f; }
-        
-        .report-content { display: none; }
+        .report-content { display: none; background: var(--card-bg); padding: 10px; border-radius: 8px; }
         .report-content.active { display: block; }
-
-        .grid-layout { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-            margin-bottom: 15px; 
-        }
-
-        .card { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; }
-        .card h3 { margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; color: var(--primary); font-size: 13px; }
-        
+        .grid-layout { display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; }
+        .card h3 { margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; color: var(--primary); font-size: 13px; }
         table { width: 100%; border-collapse: collapse; }
-        table th, table td { border: 1px solid var(--border-color); padding: 6px; text-align: center; font-size: 12px; }
-        table th { background: #f8f9fa; font-weight: bold; }
-
+        table th, table td { border: 1px solid var(--border-color); padding: 6px; text-align: center; font-size: 12px; color: var(--primary); }
+        table th { background: var(--light-bg); font-weight: bold; }
         .chart-box { text-align: center; display: flex; justify-content: center; align-items: center; padding: 10px 0; }
-
-        .rosters { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            margin-top: 10px; 
-        }
+        .rosters { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
         .roster-col { width: 100%; padding: 10px; border-radius: 6px; }
         .col-mutahakim { background-color: #ebf7ee; border: 1px solid var(--success); }
         .col-fitawr { background-color: #fefeed; border: 1px solid var(--warning); }
         .col-support { background-color: #fdf3f3; border: 1px solid var(--danger); }
         .col-evolution { background-color: #f4ecf7; border: 1px solid #8e44ad; }
-        
-        .roster-col h4 { margin-top: 0; margin-bottom: 8px; text-align: center; font-size: 12px; padding-bottom: 6px; border-bottom: 1px solid #ddd; }
-        
+        .roster-col h4 { margin-top: 0; margin-bottom: 8px; text-align: center; font-size: 12px; padding-bottom: 6px; border-bottom: 1px solid #ddd; color: #333; }
         .students-list-container { max-height: 250px; overflow-y: auto; }
-        
-        .student-item {
-            background: white; padding: 6px 8px; margin: 4px 0; border-radius: 4px;
-            font-size: 12px; border-right: 3px solid #ccc;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
+        .student-item { background: white; padding: 6px 8px; margin: 4px 0; border-radius: 4px; font-size: 12px; border-right: 3px solid #ccc; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: #333; }
         .col-mutahakim .student-item { border-right-color: var(--success); }
         .col-fitawr .student-item { border-right-color: var(--warning); }
         .col-support .student-item { border-right-color: var(--danger); }
         .col-evolution .student-item { border-right-color: #8e44ad; }
         .st-name { text-align: right; word-break: break-word; font-weight: 500; }
         .st-grade { font-weight: bold; color: #333; margin-right: 10px; font-size: 11px; direction: ltr; }
-
-        .btn-pdf {
-            display: none; width: 100%; padding: 12px; background: #e74c3c; color: white;
-            border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; text-align: center;
-        }
-
-        .developer-credits {
-            text-align: center; margin-top: 25px; padding-top: 15px;
-            border-top: 1px dashed #e2e8f0; font-size: 11px; color: #7f8c8d;
-        }
+        .btn-pdf { display: none; width: 100%; padding: 12px; background: #e74c3c; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; text-align: center; }
+        .developer-credits { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px dashed #e2e8f0; font-size: 11px; color: #7f8c8d; }
         .developer-credits span { color: var(--accent); font-weight: bold; }
-
-        h2 { font-size: 14px; text-align: center; margin-top: 5px; }
+        h2 { font-size: 14px; text-align: center; margin-top: 5px; color: var(--primary); }
 
         @media (min-width: 768px) {
             body { padding: 20px; }
@@ -195,43 +192,97 @@
 
         @media print {
             @page { size: A4 portrait; margin: 7mm 6mm; }
-            body { background: white; padding: 0; margin: 0; color: #000; font-size: 10px; }
-            .container { box-shadow: none; padding: 0; width: 100%; max-width: 100%; }
-            .upload-section, .setup-section, .tabs, .btn-pdf, #metaInfo, .developer-credits { display: none !important; }
+            body { background: white !important; padding: 0; margin: 0; color: #000 !important; font-size: 10px; }
+            .container { box-shadow: none; padding: 0; width: 100%; max-width: 100%; background: white !important; }
+            .upload-section, .setup-section, .tabs, .btn-pdf, #metaInfo, .developer-credits, .user-navbar, .theme-selector-box, .dev-panel, .love-banner { display: none !important; }
             body.is-svt #report_2 { display: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            
-            .print-meta-header {
-                display: flex !important; flex-wrap: wrap; background: #f5f6fa !important; 
-                border: 1px solid #bdc3c7 !important; border-right: 5px solid #2980b9 !important;
-                margin-bottom: 8px; padding: 6px; border-radius: 4px; gap: 10px;
-            }
-            .print-meta-cell { flex: 1; min-width: 23%; font-size: 11px; }
+            .print-meta-header { display: flex !important; flex-wrap: wrap; background: #f5f6fa !important; border: 1px solid #bdc3c7 !important; border-right: 5px solid #2980b9 !important; margin-bottom: 8px; padding: 6px; border-radius: 4px; gap: 10px; }
+            .print-meta-cell { flex: 1; min-width: 23%; font-size: 11px; color: #000 !important; }
             .print-meta-cell span { font-weight: bold; color: #2980b9 !important; }
-            
-            .report-content { 
-                display: block !important; page-break-after: always !important; break-after: page !important;
-                page-break-inside: avoid !important; margin-bottom: 0px; padding-top: 2px;
-            }
+            .report-content { display: block !important; page-break-after: always !important; break-after: page !important; page-break-inside: avoid !important; margin-bottom: 0px; padding-top: 2px; background: white !important; }
             .report-content:last-child { page-break-after: avoid !important; break-after: avoid !important; }
-            
             .grid-layout { flex-direction: row !important; }
             .grid-layout > div { flex: 1 !important; }
             .rosters { flex-direction: row !important; }
             .roster-col { flex: 1 !important; padding: 5px; }
-            .card { padding: 8px; margin-bottom: 6px; }
-            .card h3 { font-size: 11px; padding-bottom: 2px; margin-bottom: 4px; }
+            .card { padding: 8px; margin-bottom: 6px; background: white !important; border: 1px solid #bdc3c7 !important; }
+            .card h3 { font-size: 11px; padding-bottom: 2px; margin-bottom: 4px; color: #000 !important; border-bottom: 1px solid #bdc3c7 !important; }
             .chart-box { padding: 0; }
-            table th, table td { padding: 4px; font-size: 10px; }
+            table th, table td { padding: 4px; font-size: 10px; color: #000 !important; border: 1px solid #bdc3c7 !important; }
+            table th { background: #f8f9fa !important; }
             .students-list-container { max-height: none !important; overflow: visible !important; }
-            .student-item { padding: 2px 4px; margin: 2px 0; font-size: 9px; }
-            h2 { font-size: 13px !important; margin-bottom: 6px !important; }
+            .student-item { padding: 2px 4px; margin: 2px 0; font-size: 9px; background: white !important; border: 1px solid #eee !important; border-right: 3px solid #ccc !important; }
+            h2 { font-size: 13px !important; margin-bottom: 6px !important; color: #000 !important; }
         }
     </style>
 </head>
-<body>
+<body class="theme-classic">
 
-<div class="container">
+<div class="auth-wrapper" id="authWrapper">
+    <div class="auth-card">
+        <h2>🔐 تسجيل الدخول للمنظومة</h2>
+        <div class="form-group">
+            <label for="usernameInput">اسم المستخدم:</label>
+            <input type="text" id="usernameInput" placeholder="أدخل اسم المستخدم">
+        </div>
+        <div class="form-group">
+            <label for="passwordInput">كلمة المرور:</label>
+            <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور">
+        </div>
+        <button class="btn-login" onclick="attemptLogin()">دخول</button>
+        <div class="login-error" id="loginError">خطأ في اسم المستخدم أو كلمة المرور!</div>
+    </div>
+</div>
+
+<div class="container" id="mainContainer" style="display: none;">
+    
+    <div class="user-navbar">
+        <div class="user-info">مرحباً بك: <span id="navUsername">-</span> [<span id="navRole">-</span>]</div>
+        <button class="btn-logout" onclick="logout()">🚪 تسجيل الخروج</button>
+    </div>
+
+    <div class="love-banner" id="loveBanner">
+        <div class="floating-hearts">💖 ✨ 💕 🌸 ❤️ 💫 🥰</div>
+        <h2 id="loveTitle">أهلاً بملكة قلبي الأستاذة المتميزة</h2>
+        <p>إلى نبض قلبي وسندي.. أهدي لكِ هذا العمل المتواضع، كل سطر برمجي هنا كُتب بحب خالص لكِ ليريحكِ في عملكِ. أحبكِ اليوم وغداً وإلى الأبد! ❤️</p>
+    </div>
+
+    <div class="dev-panel" id="devPanel" style="display: none;">
+        <h3>🛠️ لوحة تحكم المطور (إدارة حسابات الأساتذة)</h3>
+        <div class="dev-grid">
+            <div class="card" style="margin:0;">
+                <h3>➕ إضافة حساب أستاذ(ة) جديد</h3>
+                <div class="form-group">
+                    <input type="text" id="newUsername" placeholder="اسم المستخدم الجديد" style="padding:6px; font-size:12px;">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="newPassword" placeholder="كلمة المرور" style="padding:6px; font-size:12px;">
+                </div>
+                <div class="form-group" style="flex-direction: row; align-items: center; gap:5px;">
+                    <input type="checkbox" id="newIsSpecial">
+                    <label for="newIsSpecial" style="font-size:12px; color:var(--danger); cursor:pointer;">🌟 حساب مميز (شريك الحياة)</label>
+                </div>
+                <button class="btn-login" onclick="addNewAccount()" style="padding:6px; font-size:13px; background:#2471a3;">إضافة الحساب</button>
+            </div>
+            <div class="card" style="margin:0;">
+                <h3>📋 الحسابات الحالية بالمنظومة</h3>
+                <div class="account-list" id="accountListContainer">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="theme-selector-box">
+        <span style="font-size: 12px; font-weight: bold;">🎨 تخصيص لوحة الألوان للمنظومة:</span>
+        <button class="theme-btn" style="background: #2980b9;" onclick="changeTheme('theme-classic')" title="كلاسيكي أزرق"></button>
+        <button class="theme-btn" style="background: #8e44ad;" onclick="changeTheme('theme-purple')" title="ملكي بنفسجي"></button>
+        <button class="theme-btn" style="background: #27ae60;" onclick="changeTheme('theme-forest')" title="غابة دافئة"></button>
+        <button class="theme-btn" style="background: #e67e22;" onclick="changeTheme('theme-coral')" title="شروق مرجاني"></button>
+        <button class="theme-btn" style="background: #2d2d2d;" onclick="changeTheme('theme-dark')" title="الوضع الليلي الكاتم"></button>
+        <button class="theme-btn" style="background: #ff4d6d;" onclick="changeTheme('theme-love')" title="لوحة الحب الوردية"></button>
+    </div>
+
     <h1>احصاءات خاصة بنقط المراقبة المستمرة</h1>
     
     <div class="setup-section">
@@ -278,11 +329,129 @@
 </div>
 
 <script>
+    // قاعدة بيانات الحسابات المبدئية المخزنة في LocalStorage لتفادي الضياع عند التحديث
+    if (!localStorage.getItem('usersDB')) {
+        const initialUsers = [
+            { username: "MAZOLINE", password: "QWERTYQWERTY", role: "developer", isSpecial: false },
+            { username: "SOUFIANE", password: "123", role: "teacher", isSpecial: false }
+        ];
+        localStorage.setItem('usersDB', JSON.stringify(initialUsers));
+    }
+
+    let currentUser = null;
     let globalCurrentSheet = null;
     let currentActiveTabIdx = 0;
 
     document.getElementById('fileInput').addEventListener('change', handleFile, false);
 
+    // نظام تسجيل الدخول
+    function attemptLogin() {
+        const userInp = document.getElementById('usernameInput').value.trim();
+        const passInp = document.getElementById('passwordInput').value;
+        const usersDB = JSON.parse(localStorage.getItem('usersDB'));
+
+        const foundUser = usersDB.find(u => u.username.toLowerCase() === userInp.toLowerCase() && u.password === passInp);
+
+        if (foundUser) {
+            currentUser = foundUser;
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('authWrapper').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+            
+            // تخصيص الواجهة بناء على نوع الحساب
+            document.getElementById('navUsername').innerText = currentUser.username;
+            document.getElementById('navRole').innerText = currentUser.role === 'developer' ? 'المطور العام' : (currentUser.isSpecial ? 'أستاذ متميز ✨' : 'أستاذ مستفيد');
+
+            if (currentUser.role === 'developer') {
+                document.getElementById('devPanel').style.display = 'block';
+                renderAccountList();
+            } else {
+                document.getElementById('devPanel').style.display = 'none';
+            }
+
+            // تفعيل نظام التصميم الرومانسي إذا كانت "حبيبتك" هي الحساب المميز
+            if (currentUser.isSpecial) {
+                document.getElementById('loveBanner').style.display = 'block';
+                document.getElementById('loveTitle').innerText = `أهلاً بملكة قلبي الأستاذة المتميزة (${currentUser.username}) ❤️`;
+                changeTheme('theme-love');
+            } else {
+                document.getElementById('loveBanner').style.display = 'none';
+                changeTheme('theme-classic');
+            }
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('usernameInput').value = '';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('mainContainer').style.display = 'none';
+        document.getElementById('authWrapper').style.display = 'flex';
+        changeTheme('theme-classic');
+    }
+
+    // إدارة الحسابات (خاص بالمطور)
+    function renderAccountList() {
+        const container = document.getElementById('accountListContainer');
+        const usersDB = JSON.parse(localStorage.getItem('usersDB'));
+        container.innerHTML = '';
+
+        usersDB.forEach(u => {
+            if (u.role === 'developer') return; // حماية حساب المطور من الحذف الإملائي
+            let tag = u.isSpecial ? ' <span style="color:#ff4d6d; font-weight:bold;">[💖 مميز]</span>' : '';
+            container.innerHTML += `
+                <div class="account-item">
+                    <div>👤 <strong>${u.username}</strong> ${tag}</div>
+                    <button class="btn-delete-acc" onclick="deleteAccount('${u.username}')">❌ حذف</button>
+                </div>
+            `;
+        });
+    }
+
+    function addNewAccount() {
+        const newU = document.getElementById('newUsername').value.trim();
+        const newP = document.getElementById('newPassword').value;
+        const isSp = document.getElementById('newIsSpecial').checked;
+
+        if (!newU || !newP) {
+            alert('الرجاء إدخال اسم المستخدم وكلمة المرور معاً!');
+            return;
+        }
+
+        let usersDB = JSON.parse(localStorage.getItem('usersDB'));
+        if (usersDB.some(u => u.username.toLowerCase() === newU.toLowerCase())) {
+            alert('اسم المستخدم هذا موجود مسبقاً!');
+            return;
+        }
+
+        usersDB.push({ username: newU, password: newP, role: "teacher", isSpecial: isSp });
+        localStorage.setItem('usersDB', JSON.stringify(usersDB));
+        
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('newIsSpecial').checked = false;
+        
+        renderAccountList();
+        alert('تمت إضافة حساب الأستاذ بنجاح!');
+    }
+
+    function deleteAccount(username) {
+        if (!confirm(`هل أنت متأكد من حذف حساب الأستاذ (${username})؟`)) return;
+        let usersDB = JSON.parse(localStorage.getItem('usersDB'));
+        usersDB = usersDB.filter(u => u.username.toLowerCase() !== username.toLowerCase());
+        localStorage.setItem('usersDB', JSON.stringify(usersDB));
+        renderAccountList();
+    }
+
+    // تغيير لوحة الألوان (الـ Themes)
+    function changeTheme(themeName) {
+        document.body.className = '';
+        document.body.classList.add(themeName);
+    }
+
+    // كود معالجة البيانات الأصلي (دون أي تعديل في المنطق الرياضي)
     function handleFile(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -300,10 +469,7 @@
     function updateSemesterText() {
         const selectedSemester = document.getElementById('semesterSelect').value;
         document.querySelectorAll('.m-semester').forEach(el => el.innerText = selectedSemester);
-        
-        if (globalCurrentSheet) {
-            processMasarData(globalCurrentSheet);
-        }
+        if (globalCurrentSheet) { processMasarData(globalCurrentSheet); }
     }
 
     function processMasarData(sheet) {
@@ -353,10 +519,7 @@
         let evolvedStudents = [];
 
         for (let idx = 0; idx < 5; idx++) {
-            if (isSVT && idx === 2) {
-                globalStats.push(null);
-                continue;
-            }
+            if (isSVT && idx === 2) { globalStats.push(null); continue; }
 
             let totalStudents = 0, passCount = 0;
             let maxGrade = 0, minGrade = 20, sumGrade = 0;
@@ -388,8 +551,7 @@
                     grade = parseFloat(gradeCell.v);
                 }
 
-                totalStudents++;
-                sumGrade += grade;
+                totalStudents++; sumGrade += grade;
                 if (grade > maxGrade) maxGrade = grade;
                 if (grade < minGrade) minGrade = grade;
                 if (grade >= 10) passCount++;
@@ -407,14 +569,7 @@
             let avgClass = totalStudents > 0 ? (sumGrade / totalStudents).toFixed(2) : '0.00';
             let passPercent = totalStudents > 0 ? ((passCount / totalStudents) * 100).toFixed(1) : '0';
 
-            globalStats.push({
-                total: totalStudents,
-                pass: passCount,
-                percent: passPercent,
-                avg: avgClass,
-                max: maxGrade,
-                min: minGrade === 20 ? 0 : minGrade
-            });
+            globalStats.push({ total: totalStudents, pass: passCount, percent: passPercent, avg: avgClass, max: maxGrade, min: minGrade === 20 ? 0 : minGrade });
 
             let pMut = totalStudents > 0 ? Math.round((mutahakim.length / totalStudents) * 100) : 0;
             let pTaw = totalStudents > 0 ? Math.round((fiTawr.length / totalStudents) * 100) : 0;
@@ -425,11 +580,9 @@
                     <rect x="10" y="10" width="200" height="15" rx="3" fill="#eaeded"/>
                     <rect x="10" y="10" width="${pMut * 2}" height="15" rx="3" fill="#27ae60"/>
                     <text x="220" y="22" font-family="Segoe UI" font-size="10" fill="#2c3e50" font-weight="bold">متحكم: ${pMut}%</text>
-                    
                     <rect x="10" y="38" width="200" height="15" rx="3" fill="#eaeded"/>
                     <rect x="10" y="38" width="${pTaw * 2}" height="15" rx="3" fill="#f39c12"/>
                     <text x="220" y="50" font-family="Segoe UI" font-size="10" fill="#2c3e50" font-weight="bold">طور التحكم: ${pTaw}%</text>
-                    
                     <rect x="10" y="66" width="200" height="15" rx="3" fill="#eaeded"/>
                     <rect x="10" y="66" width="${pSup * 2}" height="15" rx="3" fill="#c0392b"/>
                     <text x="220" y="78" font-family="Segoe UI" font-size="10" fill="#2c3e50" font-weight="bold">دعم: ${pSup}%</text>
@@ -437,7 +590,6 @@
             `;
 
             let tabActive = idx === currentActiveTabIdx ? 'active' : '';
-            
             let m_items = mutahakim.map(s => `<div class="student-item"><div class="st-name">👤 ${s.name}</div><div class="st-grade">${s.grade.toFixed(2)}</div></div>`).join('');
             let f_items = fiTawr.map(s => `<div class="student-item"><div class="st-name">👤 ${s.name}</div><div class="st-grade">${s.grade.toFixed(2)}</div></div>`).join('');
             let s_items = supportList.map(s => `<div class="student-item"><div class="st-name">👤 ${s.name}</div><div class="st-grade">${s.grade.toFixed(2)}</div></div>`).join('');
@@ -453,9 +605,7 @@
                         <div class="print-meta-cell">📅 السنة الدراسية: <span>${year}</span></div>
                         <div class="print-meta-cell">🔄 الدورة: <span>${currentSemester}</span></div>
                     </div>
-
                     <h2>📊 لوحة تقرير نتائج: ${examNames[idx]}</h2>
-                    
                     <div class="grid-layout">
                         <div>
                             <div class="card">
@@ -479,7 +629,6 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="card" style="margin-top:5px;">
                         <h3>📋 عتبات الدعم والتحكم التربوي الاسمي (مرتبة تناقصياً)</h3>
                         <div class="rosters">
@@ -506,21 +655,15 @@
             let nameCell = sheet['D' + row];
             if (!nameCell || !nameCell.v) continue;
             let name = nameCell.v;
-
             let f1 = sheet['G' + row] ? parseFloat(sheet['G' + row].v) : 0;
             let f2 = sheet['I' + row] ? parseFloat(sheet['I' + row].v) : 0;
-            
             if (isSVT) {
                 let ans = sheet['K' + row] ? parseFloat(sheet['K' + row].v) : 0;
-                if (f2 >= f1 && ans >= f2) {
-                    evolvedStudents.push({ name: name, path: `ف1: ${f1} ➔ ف2: ${f2} ➔ أنشطة: ${ans}` });
-                }
+                if (f2 >= f1 && ans >= f2) { evolvedStudents.push({ name: name, path: `ف1: ${f1} ➔ ف2: ${f2} ➔ أنشطة: ${ans}` }); }
             } else {
                 let f3 = sheet['K' + row] ? parseFloat(sheet['K' + row].v) : 0;
                 let ans = sheet['M' + row] ? parseFloat(sheet['M' + row].v) : 0;
-                if (f2 >= f1 && f3 >= f2 && ans >= f3) {
-                    evolvedStudents.push({ name: name, path: `ف1: ${f1} ➔ ف2: ${f2} ➔ ف3: ${f3} ➔ أنشطة: ${ans}` });
-                }
+                if (f2 >= f1 && f3 >= f2 && ans >= f3) { evolvedStudents.push({ name: name, path: `ف1: ${f1} ➔ ف2: ${f2} ➔ ف3: ${f3} ➔ أنشطة: ${ans}` }); }
             }
         }
 
@@ -548,7 +691,6 @@
         }
 
         let ev_items = evolvedStudents.map(s => `<div class="student-item"><div class="st-name">📈 <strong>${s.name}</strong></div><div class="st-grade">${s.path}</div></div>`).join('');
-
         let tabActiveEv = currentActiveTabIdx === 5 ? 'active' : '';
 
         let htmlEvolutionReport = `
@@ -562,21 +704,11 @@
                     <div class="print-meta-cell">📅 السنة الدراسية: <span>${year}</span></div>
                     <div class="print-meta-cell">🔄 الدورة: <span>${currentSemester}</span></div>
                 </div>
-
                 <h2>📈 تقرير لوحة التطور والتحصيل الشامل - الدورة ${currentSemester}</h2>
-                
                 <div class="card" style="margin-bottom: 15px;">
                     <h3>📊 جدول مقارنة المؤشرات الرقمية العامة ومدى التطور</h3>
-                    <table>
-                        <thead>
-                            ${tableHeaderRow}
-                        </thead>
-                        <tbody>
-                            ${tableBodyRows}
-                        </tbody>
-                    </table>
+                    <table><thead>${tableHeaderRow}</thead><tbody>${tableBodyRows}</tbody></table>
                 </div>
-
                 <div class="card">
                     <h3>📋 لائحة شرف التلاميذ الذين حققوا تطوراً مستمراً تصاعدياً [${evolvedStudents.length}]</h3>
                     <div class="rosters" style="margin-top:0;">
@@ -590,7 +722,6 @@
             </div>
         `;
         container.innerHTML += htmlEvolutionReport;
-        
         switchTab(currentActiveTabIdx);
     }
 
@@ -598,19 +729,8 @@
         currentActiveTabIdx = idx; 
         let buttons = document.querySelectorAll('.tab-btn');
         let reports = document.querySelectorAll('.report-content');
-        
-        buttons.forEach((b, i) => {
-            if(i === idx) b.classList.add('active');
-            else b.classList.remove('active');
-        });
-
-        reports.forEach((r) => {
-            if (r) {
-                let rIdx = parseInt(r.id.split('_')[1]);
-                if(rIdx === idx) r.classList.add('active');
-                else r.classList.remove('active');
-            }
-        });
+        buttons.forEach((b, i) => { if(i === idx) b.classList.add('active'); else b.classList.remove('active'); });
+        reports.forEach((r) => { if (r) { let rIdx = parseInt(r.id.split('_')[1]); if(rIdx === idx) r.classList.add('active'); else r.classList.remove('active'); } });
     }
 </script>
 </body>
